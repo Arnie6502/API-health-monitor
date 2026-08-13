@@ -1,0 +1,34 @@
+[tool.ruff]
+target-version = "py311"
+line-length = 95
+extend-exclude = ["alembic"]
+
+[tool.ruff.lint]
+# A pragmatic, modern selection: errors + warnings + style + imports + bugs.
+select = ["E", "W", "F", "I", "B", "UP", "C4", "SIM"]
+ignore = [
+    "E501",   # line length handled by formatter; we keep long URLs in strings
+    "B008",   # Depends() in defaults is the FastAPI idiom
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B017"]   # allow asserting on exceptions in tests
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["app/cli.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]

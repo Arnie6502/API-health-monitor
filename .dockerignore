@@ -1,0 +1,6 @@
+# Copy only what the runtime needs.
+app/
+requirements.txt
+Dockerfile
+docker-compose.yml
+README.md

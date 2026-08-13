@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Test / coverage artifacts
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Local databases (SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Env
+.env
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp

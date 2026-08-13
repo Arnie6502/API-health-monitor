@@ -1,0 +1,11 @@
+# API Health Monitor — runtime dependencies (pinned)
+fastapi==0.137.2
+uvicorn[standard]==0.34.0
+SQLAlchemy==2.0.52
+aiosqlite==0.22.1
+psycopg2-binary==2.9.12
+httpx==0.28.1
+pydantic==2.11.0
+pydantic-settings==2.14.1
+APScheduler==3.11.3
+prometheus-client==0.21.1

@@ -1,0 +1,90 @@
+# API Health Monitor — full stack: app + Postgres + Redis + Grafana + Prometheus
+#
+# `docker compose up` brings up:
+#   - app          : the FastAPI service (polls endpoints, serves REST + /metrics)
+#   - db           : PostgreSQL storage
+#   - redis        : reserved for a future celery worker (scheduler is in-process today)
+#   - prometheus   : scrapes the app's /metrics endpoint
+#   - grafana      : dashboards provisioned from ./grafana
+#
+# One-command observability stack.
+
+services:
+  app:
+    build: .
+    image: api-health-monitor:latest
+    container_name: ahm-app
+    ports:
+      - "8000:8000"
+    environment:
+      AHM_DATABASE_URL: postgresql+psycopg2://ahm:ahm@db:5432/ahm
+      AHM_POLL_INTERVAL_SECONDS: "60"
+      AHM_SCHEDULER_ENABLED: "true"
+      # Optional: set to a Slack/Discord/custom webhook to receive alerts.
+      AHM_ALERT_WEBHOOK_URL: ""
+      # Add your own APIs here (comma-separated "name|url,name|url").
+      AHM_BOOTSTRAP_ENDPOINTS: "Weather API|https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,HTTPBin|https://httpbin.org/status/200"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: ahm-db
+    environment:
+      POSTGRES_USER: ahm
+      POSTGRES_PASSWORD: ahm
+      POSTGRES_DB: ahm
+    volumes:
+      - ahm-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ahm -d ahm"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  # Reserved for a future distributed worker. The current scheduler runs
+  # in-process inside the app, so redis is here to make the stack complete
+  # and ready for a celery upgrade with zero refactor.
+  redis:
+    image: redis:7-alpine
+    container_name: ahm-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ahm-prometheus
+    volumes:
+      - ./grafana/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ahm-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - ahm-grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  ahm-db-data:
+  ahm-grafana-data:

@@ -1,0 +1,197 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "description": "API Health Monitor — latency, uptime, status, and incidents for all monitored endpoints.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Monitored Endpoints",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "id": 1,
+      "targets": [
+        {
+          "expr": "count(ahm_up)",
+          "legendFormat": "endpoints",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "fixed" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [] } },
+        "overrides": []
+      },
+      "options": { "colorMode": "value", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "value" }
+    },
+    {
+      "type": "stat",
+      "title": "Endpoints Up",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+      "id": 2,
+      "targets": [
+        {
+          "expr": "sum(ahm_up)",
+          "legendFormat": "up",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "green", "value": 1 } ] } },
+        "overrides": []
+      },
+      "options": { "colorMode": "value", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "value" }
+    },
+    {
+      "type": "stat",
+      "title": "Open Alerts",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "ahm_alerts_open",
+          "legendFormat": "open alerts",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1 } ] } },
+        "overrides": []
+      },
+      "options": { "colorMode": "background", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "value" }
+    },
+    {
+      "type": "stat",
+      "title": "Total Alerts (all time)",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 0 },
+      "id": 4,
+      "targets": [
+        {
+          "expr": "ahm_alerts_total",
+          "legendFormat": "total alerts",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "fixed" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [] } },
+        "overrides": []
+      },
+      "options": { "colorMode": "value", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "value" }
+    },
+    {
+      "type": "stat",
+      "title": "Avg Latency (all endpoints)",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 0 },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "avg(ahm_check_latency_ms)",
+          "legendFormat": "avg latency ms",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 500 }, { "color": "red", "value": 1000 } ] }, "unit": "ms" },
+        "overrides": []
+      },
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "value" }
+    },
+    {
+      "type": "timeseries",
+      "title": "Endpoint Latency (ms) over time",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 4 },
+      "id": 10,
+      "targets": [
+        {
+          "expr": "ahm_check_latency_ms",
+          "legendFormat": "{{endpoint}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "drawStyle": "line", "lineInterpolation": "linear", "lineWidth": 2, "fillOpacity": 10, "spanNulls": false, "showPoints": "never" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [] }, "unit": "ms" },
+        "overrides": []
+      },
+      "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Endpoint Status (1 = up, 0 = down)",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 13 },
+      "id": 20,
+      "targets": [
+        {
+          "expr": "ahm_up",
+          "legendFormat": "{{endpoint}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "drawStyle": "line", "lineInterpolation": "stepAfter", "lineWidth": 2, "fillOpacity": 30, "spanNulls": true, "showPoints": "never", "stacking": { "mode": "normal", "group": "A" } }, "mappings": [ { "options": { "0": { "color": "red", "text": "DOWN" }, "1": { "color": "green", "text": "UP" } }, "type": "value" } ], "thresholds": { "mode": "absolute", "steps": [] } },
+        "overrides": []
+      },
+      "options": { "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Open Alerts over time",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 13 },
+      "id": 30,
+      "targets": [
+        {
+          "expr": "ahm_alerts_open",
+          "legendFormat": "open alerts",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "fixed", "fixedColor": "red" }, "custom": { "drawStyle": "bars", "lineWidth": 1, "fillOpacity": 50, "showPoints": "never" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [] } },
+        "overrides": []
+      },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "single", "sort": "none" } }
+    },
+    {
+      "type": "table",
+      "title": "Per-endpoint check counts",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 21 },
+      "id": 40,
+      "targets": [
+        { "expr": "ahm_check_total", "legendFormat": "{{endpoint}} total", "refId": "A", "format": "table", "instant": true },
+        { "expr": "ahm_check_success_total", "legendFormat": "{{endpoint}} ok", "refId": "B", "format": "table", "instant": true },
+        { "expr": "ahm_check_fail_total", "legendFormat": "{{endpoint}} fail", "refId": "C", "format": "table", "instant": true }
+      ],
+      "transformations": [
+        { "id": "organize", "options": { "excludeByName": { "Time": true, "__name__": true }, "renameByName": { "Value #A": "Total", "Value #B": "Successes", "Value #C": "Failures" } } }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": { "showHeader": true }
+    }
+  ],
+  "refresh": "15s",
+  "schemaVersion": 39,
+  "tags": ["api-health-monitor", "observability", "devops"],
+  "templating": { "list": [] },
+  "time": { "from": "now-24h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "API Health Monitor",
+  "uid": "api-health-monitor",
+  "version": 1,
+  "weekStart": ""
+}
